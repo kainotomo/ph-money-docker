@@ -12,3 +12,4 @@ docker-compose.yml
 
 /code_phmoney/log.log
 !/code_phmoney/log.log
+/nbproject/private/

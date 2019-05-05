@@ -1,6 +1,6 @@
-# Intergo Multi-Project Local Development
+# Kainotomo Multi-Project Local Development
 
-Base domain: **local.intergo.co**
+Base domain: **local.kainotomo.com**
 
 ## First time Initialization
 
@@ -18,11 +18,11 @@ Note: If you just fresh installed docker on Ubuntu system and you receive some p
 ---
 
 Create a directory on your projects directory where this repository will be cloned. Suggested:
-`/projects/intergo/`
+`/projects/kainotomo/`
 
 Once cloned, following structure should be available:
 ```
-/projects/intergo/  
+/projects/kainotomo/  
                  /.git
                  /docker/
                  .gitignore
@@ -33,15 +33,15 @@ All following commands will run inside `docker/` directory:
 
 ```bash
 # Create a copy of your .env and docker-compose.yml from base files
-/projects/intergo/# cd docker
-/projects/intergo/docker/# cp .env.base .env
-/projects/intergo/docker/# cp docker-compose.base.yml docker-compose.yml
+/projects/kainotomo/# cd docker
+/projects/kainotomo/docker/# cp .env.base .env
+/projects/kainotomo/docker/# cp docker-compose.base.yml docker-compose.yml
 ```
 
 In case you use Valet, or you need different port for http, https, mysql and mongodb, you have to adjusts `.env` file using a text editor, eg.:
 
 ```bash
-/projects/intergo/docker/# vi .env
+/projects/kainotomo/docker/# vi .env
 ```
 
 ### Build images
@@ -50,7 +50,7 @@ In case you use Valet, or you need different port for http, https, mysql and mon
 
 For initial run, you need to open a shell terminal and run following commands inside `docker/` directory:
 ```
-/projects/intergo/docker# docker-compose up -d --build 
+/projects/kainotomo/docker# docker-compose up -d --build 
 ```
 
 It will take 5-30min, depending on your machine and internet speed.
@@ -63,7 +63,7 @@ MariaDB container is used for all projects, for this, we need to create database
 
 In same terminal, run following command:
 ```
-/projects/intergo/docker# docker-compose exec -T mariadb mysql -proot < include/mariadb/initialize.sql
+/projects/kainotomo/docker# docker-compose exec -T mariadb mysql -proot < include/mariadb/initialize.sql
 ```
 
 ### Per project clone
@@ -72,11 +72,9 @@ In same terminal, run following command:
 
 Once following commands has been run, structure will look like:
 ```
-/projects/intergo/  
+/projects/kainotomo/  
                  /.git
-                 /code_emailvalidation/
-                 /code_verification/
-                 /code_smsto/
+                 /code_ph-money/
                  /docker/
                  .gitignore
                  README.md
@@ -93,9 +91,9 @@ Project structure tree:
 
 | Project Name      | CodePath                                   | URL                                     |
 | ----------------- | ------------------------------------------ | --------------------------------------- |
-| SMS.to            | ./code_smsto                               | smsto.local.intergo.co <br/> smsto-api.local.intergo.co                 |
-| EmailVerifier.com | ./code_emailverifier <br>./code_validation | emailverifier.local.intergo.co          |
-| ~~Fax.to~~            | ~~./code_faxto~~                               | ~~faxto.local.intergo.co~~                  |
+| SMS.to            | ./code_ph-money                               | smsto.local.kainotomo.com <br/> smsto-api.local.kainotomo.com                 |
+| EmailVerifier.com | ./code_emailverifier <br>./code_validation | emailverifier.local.kainotomo.com          |
+| ~~Fax.to~~            | ~~./code_faxto~~                               | ~~faxto.local.kainotomo.com~~                  |
 | Docker            | ./docker (reservered)                      | docker files and initialization scripts |
 
 
@@ -104,11 +102,11 @@ Project structure tree:
 
 | Name          | URL                            | Port          |
 | ------------- | ------------------------------ | ------------- |
-| MailHog       | mailhog.local.intergo.co       | n/a           |
-| Mongo Express | mongo-express.local.intergo.co | n/a           |
-| Supervisor    | supervisor.local.intergo.co    | n/a           |
-| PhpMyAdmin    | phpmyadmin.local.intergo.co    | root autlogin |
-| Redis Browser | redis-web.local.intergo.co     | n/a           |
+| MailHog       | mailhog.local.kainotomo.com       | n/a           |
+| Mongo Express | mongo-express.local.kainotomo.com | n/a           |
+| Supervisor    | supervisor.local.kainotomo.com    | n/a           |
+| PhpMyAdmin    | phpmyadmin.local.kainotomo.com    | root autlogin |
+| Redis Browser | redis-web.local.kainotomo.com     | n/a           |
 | MariaDB       | localhost / root / root                    | 3307 (default)         |
 
 
@@ -149,20 +147,20 @@ sudo usermod --append --groups docker `whoami`
 ### Is CRON running?
 All CRON's are defined here:
 ```
-/projects/intergo/docker# cat include/php-fpm-horizon/cron_root
+/projects/kainotomo/docker# cat include/php-fpm-horizon/cron_root
 # Cron heathCheck
 * *     * * *   echo "Last run: `date`" > /tmp/cron_check
 
 #GeoIP
-*/5 *     * * *   [ ! -f /code_smsto/storage/app/geoip2/GeoLite2-Country.mmdb ] && /opt/update_geoip_databases.sh
+*/5 *     * * *   [ ! -f /code_ph-money/storage/app/geoip2/GeoLite2-Country.mmdb ] && /opt/update_geoip_databases.sh
 
 # Laravel
-* *     * * *   php /code_smsto/artisan schedule:run
+* *     * * *   php /code_ph-money/artisan schedule:run
 * *     * * *   php /code_emailverifier/artisan schedule:run
 ```
 
 Then, a 1min CRON check is run on:
 ```
-/projects/intergo/docker# docker-compose exec php-fpm-horizon cat /tmp/cron_check
+/projects/kainotomo/docker# docker-compose exec php-fpm-horizon cat /tmp/cron_check
 Last run: Sun Dec 23 09:59:01 UTC 2018
 ```

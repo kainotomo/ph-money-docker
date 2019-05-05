@@ -21,14 +21,14 @@ address = ":8080"
   compress = true
     [entryPoints.https.tls]
       [[entryPoints.https.tls.certificates]]
-      certFile = "/ssl/local.intergo.co/fullchain.pem"
-      keyFile = "/ssl/local.intergo.co/privkey.pem"    
+      certFile = "/ssl/local.kainotomo.com/fullchain.pem"
+      keyFile = "/ssl/local.kainotomo.com/privkey.pem"    
 
 [retry]
 
 [docker]
 endpoint = "unix:///var/run/docker.sock"
-domain = "local.intergo.co"
+domain = "local.kainotomo.com"
 watch = true
 exposedByDefault = false
 swarmMode = false

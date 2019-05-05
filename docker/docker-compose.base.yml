@@ -25,7 +25,7 @@ services:
       container_name: nginx
       hostname: nginx
       volumes:
-          - ../code_smsto/:/code_smsto/:rw
+          - ../code_ph-money/:/code_ph-money/:rw
           - ../code_emailverifier/:/code_emailverifier/:rw
           - ../code_emailvalidation/:/code_emailvalidation/:rw
           - ./include/nginx_local/conf.d/:/etc/nginx/conf.d/:ro
@@ -42,34 +42,6 @@ services:
           - "traefik.backend=nginx"
           - "traefik.port=80"    
       restart: always
-
-    smsto-redis:
-      image: redis:alpine
-      container_name: smsto-redis
-      hostname: smsto-redis
-      restart: always
-
-    emailverifier-redis:
-      image: redis:alpine
-      container_name: emailverifier-redis
-      hostname: emailverifier-redis
-      restart: always
-
-    phpredisadmin:
-      container_name: phpredisadmin
-      hostname: phpredisadmin
-      image: erikdubbelboer/phpredisadmin
-      restart: unless-stopped
-      environment:
-          - REDIS_1_HOST=smsto-redis
-          - REDIS_1_NAME=smsto-redis
-          - REDIS_2_HOST=emailverifier-redis
-          - REDIS_2_NAME=emailverifier-redis
-      labels:
-          - "traefik.enable=true"
-          - "traefik.frontend.rule=Host:redis-web.${COMPOSE_BASE_DOMAIN}"
-          - "traefik.backend=redis-web"
-          - "traefik.port=80"
 
     mariadb:
       image: mariadb:10.2
@@ -121,7 +93,7 @@ services:
         #- ./docker_files/db_geoip/:/application/storage/app/geoip2/
         # CRON
         #- ./docker_files/cron/php-fpm_laravel_schedule:/etc/cron.d/cron
-        - ../code_smsto/:/code_smsto/:rw
+        - ../code_ph-money/:/code_ph-money/:rw
         - ../code_emailverifier/:/code_emailverifier/:rw
         - ../code_emailvalidation/:/code_emailvalidation/:rw
 
@@ -131,7 +103,7 @@ services:
       container_name: php-fpm-horizon
       hostname: php-fpm-horizon
       volumes:
-        - ../code_smsto/:/code_smsto/:rw
+        - ../code_ph-money/:/code_ph-money/:rw
         - ../code_emailverifier/:/code_emailverifier/:rw
         - ../code_emailvalidation/:/code_emailvalidation/:rw
       labels:
@@ -180,7 +152,7 @@ services:
       hostname: nodejs
       working_dir: /application
       volumes:
-          - ../code_smsto/:/code_smsto/:rw
+          - ../code_ph-money/:/code_ph-money/:rw
           - ../code_emailverifier/:/code_emailverifier/:rw
       #restart: always
       command: echo "Container ready."
@@ -209,7 +181,7 @@ services:
     #   restart: unless-stopped
 
 #    geoip:
-#      image: registry.intergo.co/geoip:latest
+#      image: registry.kainotomo.com/geoip:latest
 #      #build:
 #      #  context: ./include/geoip
 #      container_name: geoip
@@ -221,5 +193,5 @@ services:
 
 networks:
   default:
-    name: intergo-local-net
+    name: kainotomo-local-net
     driver: bridge
