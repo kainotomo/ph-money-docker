@@ -3,7 +3,7 @@ version: '3.6'
 services:
     kainotomo-traefik:
       image: traefik:1.7.11
-      restart: no
+      restart: unless-stopped
       ports:
         - ${COMPOSE_PORT_HTTP}:80
         - ${COMPOSE_PORT_HTTPS}:443
@@ -18,7 +18,7 @@ services:
           - "traefik.frontend.rule=Host:traefik.${COMPOSE_BASE_DOMAIN}"
           - "traefik.backend=traefik"
           - "traefik.port=8080"    
-      restart: no
+      restart: unless-stopped
 
     kainotomo-nginx:
       image: nginx:1.16.0-alpine
@@ -38,9 +38,9 @@ services:
           - "traefik.enable=true"
           - "traefik.frontend.rule=HostRegexp:{catchall:.*}"
           - "traefik.frontend.priority=1"
-          - "traefik.backend=nginx"
+          - "traefik.backend=kainotomo-nginx"
           - "traefik.port=80"    
-      restart: no
+      restart: unless-stopped
 
     kainotomo-mariadb:
       image: mariadb:10.4
@@ -110,7 +110,7 @@ services:
       volumes:
           - ../code_ph-money/:/code_ph-money/:rw
           #- ../code_emailverifier/:/code_emailverifier/:rw
-      #restart: no
+      #restart: unless-stopped
       command: echo "Container ready."
 
     # kainotomo-netdata:
@@ -142,7 +142,7 @@ services:
 #      #  context: ./include/geoip
 #      container_name: kainotomo-geoip
 #      hostname: geoip
-#      restart: no
+#      restart: unless-stopped
 #      volumes:
 #         - ./docker_files/db_geoip/:/usr/share/GeoIP/
 #
