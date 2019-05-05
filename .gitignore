@@ -1,0 +1,14 @@
+# Defined Projects
+code_phmoney
+code_phmoney/*
+.idea
+
+# logs
+docker/logs/*
+
+# Docker files
+.env
+docker-compose.yml
+
+/code_phmoney/log.log
+!/code_phmoney/log.log
