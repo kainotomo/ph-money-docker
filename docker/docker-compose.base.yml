@@ -109,7 +109,7 @@ services:
       working_dir: /application
       volumes:
           - ../code_ph-money/:/code_ph-money/:rw
-          - ../code_emailverifier/:/code_emailverifier/:rw
+          #- ../code_emailverifier/:/code_emailverifier/:rw
       #restart: always
       command: echo "Container ready."
 

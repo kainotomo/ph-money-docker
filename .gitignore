@@ -1,6 +1,6 @@
 # Defined Projects
-code_phmoney
-code_phmoney/*
+code_ph-money
+code_ph-money/*
 .idea
 
 # logs
@@ -10,6 +10,6 @@ docker/logs/*
 .env
 docker-compose.yml
 
-/code_phmoney/log.log
-!/code_phmoney/log.log
+/code_ph-money/log.log
+!/code_ph-money/log.log
 /nbproject/private/
