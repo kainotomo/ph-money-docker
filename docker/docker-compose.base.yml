@@ -12,7 +12,7 @@ services:
         - ./traefik/traefik.toml:/traefik.toml
         - ./traefik/ssl/:/ssl/
         - ./logs:/logs
-      container_name: traefik
+      container_name: kainotomo-traefik
       labels:
           - "traefik.enable=true"
           - "traefik.frontend.rule=Host:traefik.${COMPOSE_BASE_DOMAIN}"
@@ -22,12 +22,11 @@ services:
 
     nginx:
       image: nginx:alpine
-      container_name: nginx
+      container_name: kainotomo-nginx
       hostname: nginx
       volumes:
           - ../code_ph-money/:/code_ph-money/:rw
-          - ../code_emailverifier/:/code_emailverifier/:rw
-          - ../code_emailvalidation/:/code_emailvalidation/:rw
+          #- ../code_emailvalidation/:/code_emailvalidation/:rw
           - ./include/nginx_local/conf.d/:/etc/nginx/conf.d/:ro
       depends_on:
           - php-fpm
@@ -45,7 +44,7 @@ services:
 
     mariadb:
       image: mariadb:10.2
-      container_name: mariadb
+      container_name: kainotomo-mariadb
       hostname: mariadb
       volumes:
         - ./backup:/backup
@@ -54,38 +53,11 @@ services:
       environment:
         - MYSQL_ROOT_PASSWORD=root
 
-    mongo:
-      image: mongo:3.6
-      command: --smallfiles
-      container_name: mongo
-      hostname: mongo
-      restart: always
-      ports:
-        - ${COMPOSE_PORT_MONGO}:27017
-      #environment:
-      #  - MONGO_INITDB_ROOT_USERNAME: root
-      #  - MONGO_INITDB_ROOT_PASSWORD: example
-
-    mongo-express:
-      image: mongo-express
-      container_name: mongo-express
-      hostname: mongo-express
-      depends_on:
-          - mongo
-      restart: unless-stopped
-      labels:
-          - "traefik.enable=true"
-          - "traefik.frontend.rule=Host:mongo-express.${COMPOSE_BASE_DOMAIN}"
-          - "traefik.backend=mongo-express"
-          - "traefik.port=8081"
-
     php-fpm:
       build:
         context: ./include/php-fpm
-      container_name: php-fpm
+      container_name: kainotomo-php-fpm
       hostname: php-fpm
-      # xdebug idekey "PHPSTORM"
-      # xdebug port 9001
       volumes:
         # TimeFix
         #- /etc/localtime:/etc/localtime:ro
@@ -94,27 +66,11 @@ services:
         # CRON
         #- ./docker_files/cron/php-fpm_laravel_schedule:/etc/cron.d/cron
         - ../code_ph-money/:/code_ph-money/:rw
-        - ../code_emailverifier/:/code_emailverifier/:rw
-        - ../code_emailvalidation/:/code_emailvalidation/:rw
-
-    php-fpm-horizon:
-      build:
-        context: ./include/php-fpm-horizon
-      container_name: php-fpm-horizon
-      hostname: php-fpm-horizon
-      volumes:
-        - ../code_ph-money/:/code_ph-money/:rw
-        - ../code_emailverifier/:/code_emailverifier/:rw
-        - ../code_emailvalidation/:/code_emailvalidation/:rw
-      labels:
-        - "traefik.enable=true"
-        - "traefik.frontend.rule=Host:supervisor.${COMPOSE_BASE_DOMAIN}"
-        - "traefik.backend=horizon-supervisor"
-        - "traefik.port=8001"
-
+        #- ../code_emailverifier/:/code_emailverifier/:rw
+    
     phpmyadmin:
       image: phpmyadmin/phpmyadmin
-      container_name: phpmyadmin
+      container_name: kainotomo-phpmyadmin
       hostname: phpmyadmin
       environment:
         #- PMA_ARBITRARY=1
@@ -136,7 +92,7 @@ services:
 
     mailhog:
       image: mailhog/mailhog:latest
-      container_name: mailhog
+      container_name: kainotomo-mailhog
       restart: unless-stopped
       labels:
           - "traefik.enable=true"
@@ -148,7 +104,7 @@ services:
       image: node:9-alpine
       #build:
       #  context: ./include/vuejs-watch
-      container_name: nodejs
+      container_name: kainotomo-nodejs
       hostname: nodejs
       working_dir: /application
       volumes:
@@ -159,7 +115,7 @@ services:
 
     # netdata:
     #   image: netdata/netdata
-    #   container_name: netdata
+    #   container_name: kainotomo-netdata
     #   hostname: netdata
     #   #ports:
     #   #  - 19999:19999
@@ -184,7 +140,7 @@ services:
 #      image: registry.kainotomo.com/geoip:latest
 #      #build:
 #      #  context: ./include/geoip
-#      container_name: geoip
+#      container_name: kainotomo-geoip
 #      hostname: geoip
 #      restart: always
 #      volumes:
