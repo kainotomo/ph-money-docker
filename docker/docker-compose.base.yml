@@ -1,9 +1,9 @@
 version: '3.6'
 
 services:
-    traefik:
-      image: traefik:1.7.7
-      restart: always
+    kainotomo-traefik:
+      image: traefik:1.7.11
+      restart: no
       ports:
         - ${COMPOSE_PORT_HTTP}:80
         - ${COMPOSE_PORT_HTTPS}:443
@@ -18,10 +18,10 @@ services:
           - "traefik.frontend.rule=Host:traefik.${COMPOSE_BASE_DOMAIN}"
           - "traefik.backend=traefik"
           - "traefik.port=8080"    
-      restart: always
+      restart: no
 
-    nginx:
-      image: nginx:alpine
+    kainotomo-nginx:
+      image: nginx:1.16.0-alpine
       container_name: kainotomo-nginx
       hostname: nginx
       volumes:
@@ -29,7 +29,7 @@ services:
           #- ../code_emailvalidation/:/code_emailvalidation/:rw
           - ./include/nginx_local/conf.d/:/etc/nginx/conf.d/:ro
       depends_on:
-          - php-fpm
+          - kainotomo-php-fpm
       networks:
         default:
           aliases:
@@ -40,10 +40,10 @@ services:
           - "traefik.frontend.priority=1"
           - "traefik.backend=nginx"
           - "traefik.port=80"    
-      restart: always
+      restart: no
 
-    mariadb:
-      image: mariadb:10.2
+    kainotomo-mariadb:
+      image: mariadb:10.4
       container_name: kainotomo-mariadb
       hostname: mariadb
       volumes:
@@ -53,7 +53,7 @@ services:
       environment:
         - MYSQL_ROOT_PASSWORD=root
 
-    php-fpm:
+    kainotomo-php-fpm:
       build:
         context: ./include/php-fpm
       container_name: kainotomo-php-fpm
@@ -68,8 +68,8 @@ services:
         - ../code_ph-money/:/code_ph-money/:rw
         #- ../code_emailverifier/:/code_emailverifier/:rw
     
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
+    kainotomo-phpmyadmin:
+      image: phpmyadmin/phpmyadmin:latest
       container_name: kainotomo-phpmyadmin
       hostname: phpmyadmin
       environment:
@@ -79,7 +79,7 @@ services:
         - PMA_HOST=mariadb
       restart: unless-stopped
       depends_on:
-        - mariadb
+        - kainotomo-mariadb
 #      ports:
 #        - 8080:80
       volumes:
@@ -90,7 +90,7 @@ services:
           - "traefik.backend=phpmyadmin"
           - "traefik.port=80"
 
-    mailhog:
+    kainotomo-mailhog:
       image: mailhog/mailhog:latest
       container_name: kainotomo-mailhog
       restart: unless-stopped
@@ -100,8 +100,8 @@ services:
           - "traefik.backend=mailhog"
           - "traefik.port=8025"
 
-    nodejs:
-      image: node:9-alpine
+    kainotomo-nodejs:
+      image: node:11.10.0-alpine
       #build:
       #  context: ./include/vuejs-watch
       container_name: kainotomo-nodejs
@@ -110,10 +110,10 @@ services:
       volumes:
           - ../code_ph-money/:/code_ph-money/:rw
           #- ../code_emailverifier/:/code_emailverifier/:rw
-      #restart: always
+      #restart: no
       command: echo "Container ready."
 
-    # netdata:
+    # kainotomo-netdata:
     #   image: netdata/netdata
     #   container_name: kainotomo-netdata
     #   hostname: netdata
@@ -136,13 +136,13 @@ services:
     #       - "traefik.port=19999"
     #   restart: unless-stopped
 
-#    geoip:
+#    kainotomo-geoip:
 #      image: registry.kainotomo.com/geoip:latest
 #      #build:
 #      #  context: ./include/geoip
 #      container_name: kainotomo-geoip
 #      hostname: geoip
-#      restart: always
+#      restart: no
 #      volumes:
 #         - ./docker_files/db_geoip/:/usr/share/GeoIP/
 #
